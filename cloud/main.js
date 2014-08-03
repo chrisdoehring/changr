@@ -13,6 +13,13 @@ Parse.Cloud.define("cereal", function(request, response) {
 	});
 });
 
+Parse.Cloud.define("offspring", function(request, response) {
+	accumulator = [];
+	service.offspring(accumulator, request.params.nodeId).then(function(result) {
+		response.success(result);
+	});
+});
+
 
 Parse.Cloud.define("nodes", function(request, response) {
     var query = new Parse.Query("Node");

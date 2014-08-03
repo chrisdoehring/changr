@@ -48,3 +48,53 @@ var cereal = function(accumulator, nodeId) {
 } 
  
 exports.cereal = cereal;
+
+var offspring = function(accumulator, nodeId) {
+
+ 
+    var promise = new Parse.Promise();
+
+    var Node = Parse.Object.extend('Node');
+
+    var parentA = new Node();
+    parentA.id = nodeId;
+
+    q1 = new Parse.Query("Node").equalTo('parentA', parentA);
+    q2 = new Parse.Query("Node").equalTo('parentB', parentA);
+    var query = Parse.Query.or(q1, q2);
+ 
+    console.log("offspring query for nodeId: " + nodeId + ", query: " + JSON.stringify(query));
+    query.find().then(function(results) {
+        console.log("results: " + JSON.stringify(results));
+        if (results.length == 0) {
+            promise.resolve(accumulator);
+        }
+        else {
+
+            promises = [];
+
+            for (x in results) {
+                accumulator.push(results[x]);
+                promises.push(offspring(accumulator, results[x].id));
+            }
+
+            Parse.Promise.when(promises).then(
+                function() {
+                    promise.resolve(accumulator);
+                },
+                function(error) {
+                    promise.reject(error);
+                });
+        }
+    },
+    function(error) {
+        promise.reject(error);
+    });
+
+
+
+    return promise;
+
+} 
+ 
+exports.offspring = offspring;
