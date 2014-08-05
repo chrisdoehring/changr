@@ -58,21 +58,31 @@ var cereal = function(accumulator, nodeId) {
  
 exports.cereal = cereal;
 
-var offspring = function(accumulator, nodeId) {
+var offspring = function(accumulator, nodeIds) {
 
  
     var promise = new Parse.Promise();
 
     var Node = Parse.Object.extend('Node');
 
-    var parentA = new Node();
-    parentA.id = nodeId;
+    // var parentA = new Node();
+    // parentA.id = nodeId;
 
-    q1 = new Parse.Query("Node").equalTo('parentA', parentA);
-    q2 = new Parse.Query("Node").equalTo('parentB', parentA);
+    parentList = {};
+    _.each(nodeIds, function(nodeId) {
+        n = new Node();
+        n.id = nodeId;
+        parentList[nodeId] = n;
+    });
+
+    parentList = _.values(parentList);
+    q1 = new Parse.Query("Node").containedIn('parentA', parentList);
+    q2 = new Parse.Query("Node").containedIn('parentB', parentList);
     var query = Parse.Query.or(q1, q2);
+    query.include('parentA');
+    query.include('parentB');
  
-    console.log("offspring query for nodeId: " + nodeId + ", query: " + JSON.stringify(query));
+    console.log("offspring query for nodeIds: " + nodeIds + ", query: " + JSON.stringify(query));
     query.find().then(function(results) {
         console.log("results: " + JSON.stringify(results));
         if (results.length == 0) {
@@ -84,9 +94,10 @@ var offspring = function(accumulator, nodeId) {
 
             for (x in results) {
                 accumulator.push(results[x]);
-                promises.push(offspring(accumulator, results[x].id));
+                promises.push(results[x].id);
             }
 
+            promises = offspring(accumulator, promises);
             Parse.Promise.when(promises).then(
                 function() {
                     promise.resolve(accumulator);

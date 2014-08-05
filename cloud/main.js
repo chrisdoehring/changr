@@ -17,7 +17,7 @@ Parse.Cloud.define("cereal", function(request, response) {
 
 Parse.Cloud.define("offspring", function(request, response) {
 	accumulator = [];
-	service.offspring(accumulator, request.params.nodeId).then(function(result) {
+	service.offspring(accumulator, [request.params.nodeId]).then(function(result) {
 		response.success(result);
 	});
 });
