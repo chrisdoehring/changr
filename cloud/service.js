@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 var cereal = function(accumulator, nodeId) {
 
  
@@ -6,15 +8,22 @@ var cereal = function(accumulator, nodeId) {
     var query = new Parse.Query("Node");
     // query.include("parents");
  
+    // Don't bother looking up a node that's already in accumulator.
+    if (nodeId in accumulator) {
+        promise.resolve(accumulator);
+        return promise;
+    }
+
     query.get(nodeId).then(
     	function(node) {
 
 			parentA = node.get('parentA');
 			parentB = node.get('parentB');
-    		accumulator.push(node);
-    		
+    		accumulator[node.id] = node;
 
-    		if (parentA === undefined || parentB === undefined) {
+                		
+
+    		if (_.keys(accumulator).length >= 2 || parentA === undefined || parentB === undefined) {
 	    		promise.resolve(accumulator);
 	   		}
 	   		else {

@@ -1,5 +1,7 @@
 service = require('cloud/service.js');
 triggers = require('cloud/triggers.js');
+var _ = require('underscore');
+
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
 Parse.Cloud.define("hello", function(request, response) {
@@ -7,9 +9,9 @@ Parse.Cloud.define("hello", function(request, response) {
 });
 
 Parse.Cloud.define("cereal", function(request, response) {
-	accumulator = [];
+	accumulator = {};
 	service.cereal(accumulator, request.params.nodeId).then(function(result) {
-		response.success(result);
+		response.success(_.values(result));
 	});
 });
 
