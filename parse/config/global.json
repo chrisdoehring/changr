@@ -4,8 +4,8 @@
             "link": "changr"
         }, 
         "changr": {
-            "applicationId": "uHud4AZfcs17eXowYDY2eOmQiH8a9EPJv4NDwhMo", 
-            "masterKey": "LWDIhedmvvtHCdBvjmr2jMy4fSrYSyQlaD9TwAkE"
+            "applicationId": "{{applicationId}}", 
+            "masterKey": "{{masterKey}}"
         }
     }, 
     "global": {
